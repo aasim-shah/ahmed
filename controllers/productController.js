@@ -17,7 +17,9 @@ module.exports = {
 
             await newProduct.save();
 
-            res.render("homepage" , {products : [] , error : null , success : null})
+            const products = await Products.find();
+
+            res.render("homepage" , {products : products, error : null , success : null})
         } catch (error) {
             console.error(error);
             res.status(500).send("Internal server error!");
