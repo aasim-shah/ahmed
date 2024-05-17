@@ -13,7 +13,7 @@ const jwt = require('jsonwebtoken');
 const { createProduct, getAllProducts, getProductDetails, editProduct, updateProduct, deleteProduct } = require('./controllers/productController');
 
 const app = express();
-const port = 8080;
+const port = process.env.PORT ||  8080;
 
 
 // importan middlewares
@@ -53,8 +53,11 @@ module.exports = {upload}
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use("/" , express.static("/public"))
 app.use(bodyParser.json());
+
+
+
 // MongoDB connection string
-const mongoDB = 'mongodb+srv://asim:mardan8110@cluster0.btwlh.mongodb.net/ahmed?retryWrites=true&w=majority'; // Replace 'myDb' with your actual database name
+const mongoDB = 'mongodb+srv://asim:mardan8110@cluster0.btwlh.mongodb.net/ahmed?retryWrites=true&w=majority'; 
 // const mongoDB = 'mongodb://127.0.0.1:27017/ahmed?retryWrites=true&w=majority';
 
 
@@ -64,7 +67,6 @@ mongoose.connect(mongoDB, { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => console.log('MongoDB connection successful'))
     .catch(err => console.error('MongoDB connection error:', err));
 
-// Rest of your express server code
 
 
 
@@ -89,7 +91,6 @@ const fetchUser = async (req, res, next) => {
 
 app.use(fetchUser)
 
-// get route to send  all articles from the db
 app.get('/', getAllProducts);
 
 
@@ -112,14 +113,11 @@ app.put('/product/update/:id' , upload.single("image"),updateProduct);
 app.delete('/product/delete/:id',deleteProduct);
 
 
-// register user
 app.post("/signup",   signup )
 
 
-// upload produt
 app.post("/products/upload", upload.single("image") ,  createProduct )
 
-// login user
 app.post("/login", login)
 
 
