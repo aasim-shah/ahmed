@@ -11,6 +11,7 @@ const cookieParser = require('cookie-parser');
 
 const jwt = require('jsonwebtoken');
 const { createProduct, getAllProducts, getProductDetails, editProduct, updateProduct, deleteProduct } = require('./controllers/productController');
+const authenticate = require('./utils/authMiddleware');
 
 const app = express();
 const port = process.env.PORT ||  8080;
@@ -57,7 +58,7 @@ app.use(bodyParser.json());
 
 
 // MongoDB connection string
-const mongoDB = 'mongodb+srv://asim:mardan8110@cluster0.btwlh.mongodb.net/ahmed?retryWrites=true&w=majority'; 
+const mongoDB = 'mongodb+srv://ahmed:K99hw4AVdcDLMsP6@aasimshah.hvncbvh.mongodb.net/ahmed?retryWrites=true&w=majority'
 // const mongoDB = 'mongodb://127.0.0.1:27017/ahmed?retryWrites=true&w=majority';
 
 
@@ -107,16 +108,16 @@ app.get('/product/add', (req, res) => {
 
 app.get('/product/details/:id',getProductDetails);
 
-app.get('/product/edit/:id',editProduct);
-app.put('/product/update/:id' , upload.single("image"),updateProduct);
+app.get('/product/edit/:id', authenticate, editProduct);
+app.put('/product/update/:id' ,  upload.single("image"),updateProduct);
 
-app.delete('/product/delete/:id',deleteProduct);
+app.delete('/product/delete/:id' , authenticate,deleteProduct);
 
 
 app.post("/signup",   signup )
 
 
-app.post("/products/upload", upload.single("image") ,  createProduct )
+app.post("/products/upload", upload.single("image") , authenticate,   createProduct )
 
 app.post("/login", login)
 
