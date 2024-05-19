@@ -3,7 +3,7 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const multer = require('multer');
 const cors  = require('cors');
-const { signup, login } = require('./controllers/userContoller');
+const { signup, login, logout } = require('./controllers/userContoller');
 const User = require('./models/userModels');
 const cookieParser = require('cookie-parser');
 
@@ -69,8 +69,7 @@ mongoose.connect(mongoDB, { useNewUrlParser: true, useUnifiedTopology: true })
     .catch(err => console.error('MongoDB connection error:', err));
 
 
-
-
+    
 const fetchUser = async (req, res, next) => {
     const token = req.cookies.token;
 
@@ -79,18 +78,21 @@ const fetchUser = async (req, res, next) => {
             const decoded = jwt.verify(token, 'mySuperSecret');
 
             const user = await User.findById(decoded.userId);
-            console.log({user})
-
             res.locals.user = user;
         } catch (error) {
             console.error(error);
         }
-    }
+    }else{
+        res.locals.user = {};
 
+    }
+    
     next(); 
 }
 
 app.use(fetchUser)
+
+
 
 app.get('/', getAllProducts);
 
@@ -101,25 +103,28 @@ app.get('/login', (req, res) => {
 app.get('/signup', (req, res) => {
     res.render("signup" , { error : null})
 });
-app.get('/product/add', (req, res) => {
+app.get('/product/add', authenticate ,  (req, res) => {
     res.render("newProduct", { error : null})
 });
+
+app.post("/signup",   signup )
+app.post("/login", login)
+app.get("/signout", logout)
+
 
 
 app.get('/product/details/:id',getProductDetails);
 
 app.get('/product/edit/:id', authenticate, editProduct);
-app.put('/product/update/:id' ,  upload.single("image"),updateProduct);
+app.put('/product/update/:id' ,authenticate ,   upload.single("image"),updateProduct);
 
 app.delete('/product/delete/:id' , authenticate,deleteProduct);
 
 
-app.post("/signup",   signup )
 
 
 app.post("/products/upload", upload.single("image") , authenticate,   createProduct )
 
-app.post("/login", login)
 
 
   

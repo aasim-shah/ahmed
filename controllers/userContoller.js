@@ -51,5 +51,9 @@ module.exports = {
             console.error(error);
             res.status(500).send("Internal server error!");
         }
+    },
+    logout : async (req, res) => {
+        res.clearCookie('token');
+        res.redirect('/login');
     }
 };

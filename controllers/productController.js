@@ -90,6 +90,7 @@ module.exports = {
             await Products.findByIdAndDelete(req.params.id);
             res.json({success : true})           
         } catch (error) {
+            console.log({error})
             res.status(500).send('Server Error');
         }
     },
